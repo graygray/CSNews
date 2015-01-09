@@ -23,7 +23,6 @@ import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class NoteActivity extends Activity {
 
@@ -262,11 +261,24 @@ public class NoteActivity extends Activity {
 			
 			Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND); 
 			sharingIntent.setType("text/plain");
-			sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My 10min News Notes - " + MainActivity.videoDate);
+			sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My 10minNews Notes - " + MainActivity.videoDate);
 			sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, noteContent);
 			startActivity(Intent.createChooser(sharingIntent, "Share via ..."));
 			break;
 
+		case R.id.action_show_kb:
+			
+			InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+			imm.showSoftInput(mTextView, InputMethodManager.SHOW_FORCED);
+
+			break;
+			
+		case R.id.action_hide_kb:
+			
+			((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(mTextView.getWindowToken(), 0);
+			
+			break;
+	
 		default:
 			break;
 		}

@@ -37,13 +37,13 @@ public class PlayVideoService extends IntentService {
 		
 		// set to foreground service
 		Notification note = new Notification(R.drawable.ic_launcher,
-				"10min News", System.currentTimeMillis());
+				"10minNews", System.currentTimeMillis());
 		Intent i = new Intent(this, PlayActivity.class);
 		i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 				| Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent pi = PendingIntent.getActivity(this, 0,
                         i, 0);
-		note.setLatestEventInfo(this, "10min News",
+		note.setLatestEventInfo(this, "10minNews",
 				"Service is running", pi);
 		note.flags |= Notification.FLAG_NO_CLEAR;
 		startForeground(1337, note);

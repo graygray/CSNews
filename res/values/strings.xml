@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">10min News</string>
+    <string name="app_name">10minNews</string>
     <string name="action_update_list">Manual Update</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
@@ -10,10 +10,13 @@
     <string name="action_qa">Q &amp; A</string>
     <string name="action_notelist">Quick Note List</string>
     <string name="action_note">Quick Note</string>
+    <string name="action_show_kb">Show keyboard</string>
+    <string name="action_hide_kb">Hide Keyboard</string>
     <string name="action_share_note">Share Note</string>
     <string name="action_rough_position">Rough Position</string>
     <string name="action_test">Test</string>
     <string name="action_rotate_screen">Rotate Screen</string>
+    <string name="action_rank">Rank me!</string>
     <string name="title_activity_note_list">Quick Note List</string>
     <string name="title_activity_note">Note Content</string>
     <string name="string_translate">Translate</string>

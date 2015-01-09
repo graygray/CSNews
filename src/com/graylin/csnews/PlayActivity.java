@@ -1420,7 +1420,14 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 	
 	public void setResultText(String s){
 		
+		s = s.replace("U.S. ", "____1");
+		s = s.replace("U.K. ", "____2");
+		
 		s = s.replace(". ", ".\n\n");
+		
+		s = s.replace("____1", "U.S. ");
+		s = s.replace("____2", "U.K. ");
+		
 		s = s.replace("? ", "?\n\n");
 		s = s.replace("\n\n\n\n\n", "\n");
 		s = s.replace("\n\n\n\n", "\n");

@@ -25,11 +25,15 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;  
 import android.os.Environment;
 import android.os.Handler;
@@ -43,6 +47,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;  
 import android.widget.LinearLayout;
 import android.widget.ListView;  
@@ -51,8 +56,8 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	
-	public static boolean isDebug = false;
-//	public static boolean isDebug = true;
+//	public static boolean isDebug = false;
+	public static boolean isDebug = true;
 
 	public static boolean isPremium = false;
 	public static boolean isNeedUpdate = false;
@@ -126,6 +131,16 @@ public class MainActivity extends Activity {
 	public static final String AD_UNIT_ID = "ca-app-pub-5561117272957358/8626647607";
 	public static final String AD_SPLASH_UNIT_ID = "ca-app-pub-5561117272957358/1103380808";
 	
+	// my Blog's variables
+	public static final String MY_BLOG_URL = "http://lkqlinsblog.blogspot.tw/2014/01/android-besr-app-for-cnn-student-news.html";
+	public boolean isNotification = false;
+	public String notificationContent = "";
+	public boolean isEnableVideo = false;
+	public int newestAppVersion = 0;
+	public int currentAppVersion = 0;
+	
+	public String appPackageName;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -134,6 +149,8 @@ public class MainActivity extends Activity {
 		if (isDebug) {
 			Log.e("gray", "MainActivity.java: START ===============");
 		}
+		
+		appPackageName = getPackageName();
 		
 		// register broadcast event
 		audioManager =(AudioManager)getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
@@ -195,13 +212,14 @@ public class MainActivity extends Activity {
         	TextView tv  = new TextView(this);
             tv.setMovementMethod(LinkMovementMethod.getInstance());
             tv.setText(Html.fromHtml(
-            		"How to use this app please have a look at <b>Information</b>; " +
-					"errors, bugs or questions please see <b>Q & A</b> first.<br>"
+            		"1. How to use this app please take a look at <b>Information</b>; <br>" +
+					"2. Errors, bugs or questions please see <b>Q & A</b> first.<br><br>" +
+					"<b>I will really appreciate if you rank this app or give some feedback. thank you & enjoy ^^</b>"
             		)); 
             tv.setTextSize(18);
             tv.setPadding(20, 20, 20, 20);
             new AlertDialog.Builder(MainActivity.this)
-            .setTitle("First Time to Use Message")
+            .setTitle("Notice!")
             .setView(tv)
             .show();
 			
@@ -254,7 +272,7 @@ public class MainActivity extends Activity {
 					@Override
 					public void run() 
 					{ 
-						deleteCNNSFiles(autoDelete);
+						deleteCNNSFilesByTime(autoDelete);
 					} 
 				}).start();
 			} 
@@ -270,6 +288,22 @@ public class MainActivity extends Activity {
         isUpdateVideoTimeOut = false;
         String lastVideosource = sharedPrefs.getString("lastVideosource", "");
         if (isNetworkAvailable()) {
+        	
+        	// check blog's variable
+        	new Thread(new Runnable() 
+    		{ 
+    			@Override
+    			public void run() 
+    			{
+    				try {
+    					getBlogVaraibles();
+    					handler.sendEmptyMessage(3);
+    				} catch (Exception e) {
+    					Log.e("gray", "MainActivity.java:onCreate, " + "getBlogVaraibles, Exception:" + e.toString());
+    					e.printStackTrace();
+    				}
+    			}
+    		}).start();
         	
         	SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd-kk", Locale.US);
         	currentTime = s.format(new Date());
@@ -304,7 +338,7 @@ public class MainActivity extends Activity {
 							}
         					handler.sendEmptyMessage(2);
         				} catch (Exception e) {
-        					Log.e("gray", "MainActivity.java:onCreate, " + "isVideoUpdate, Exception : " + e.toString());
+        					Log.e("gray", "MainActivity.java:onCreate, " + "isVideoUpdate, Exception:" + e.toString());
         					e.printStackTrace();
         				}
         			} 
@@ -406,7 +440,7 @@ public class MainActivity extends Activity {
 				new Thread(new Runnable() {
 					@Override
 					public void run() {
-						deleteCNNSFiles(autoDelete);
+						deleteCNNSFilesByTime(autoDelete);
 						handler.sendEmptyMessage(1);
 					}
 				}).start();
@@ -587,7 +621,78 @@ public class MainActivity extends Activity {
 				intent.setClass(MainActivity.this, PlayActivity.class);
 				startActivityForResult(intent, 1);
 			}
+			
 	    }); 
+	    
+	    listView.setLongClickable(true);
+	    listView.setOnItemLongClickListener(new OnItemLongClickListener() {
+
+            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
+
+            	if (isDebug) {
+            		Log.e("gray", "MainActivity.java:onItemLongClick, pos:" + pos + ", id:" + id);
+				}
+
+            	String [] tempSA = new String [32];
+	            tempSA = cnnScriptAddrStringArray[pos].split("/");
+	            if (isDebug) {
+	                Log.e("gray", "MainActivity.java:cnnListStringArray, length : " + tempSA.length);
+	                for (int j = 0; j < tempSA.length; j++) {
+	                    Log.e("gray", "MainActivity.java:showListView, " + j + " : " + tempSA[j]);
+	                }
+	            }
+	            
+	            int archiveYear = 0, archiveMonth, archiveDay, realYear = 0, realMonth = 0, realDay = 0;
+	            String archiveMonthS = null, archiveDayS = null, realMonthS = null, realDayS = null;
+	            DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+	            try {
+//	                Date date = df.parse("2013-12-31");
+	                Date date = df.parse(tempSA[1] + "-" + tempSA[2] + "-" + tempSA[3]);
+	                Calendar cal = Calendar.getInstance();
+	                cal.setTime(date);
+	 
+	                archiveYear = cal.get(Calendar.YEAR);
+	                archiveMonth = cal.get(Calendar.MONTH) + 1;
+	                archiveDay = cal.get(Calendar.DAY_OF_MONTH);
+	                archiveMonthS = String.format(Locale.US, "%02d", archiveMonth);
+	                archiveDayS = String.format(Locale.US, "%02d", archiveDay);
+	                
+	                cal.add(Calendar.DAY_OF_MONTH, 1);
+	                realYear = cal.get(Calendar.YEAR);
+	                realMonth = cal.get(Calendar.MONTH) + 1;
+	                realDay = cal.get(Calendar.DAY_OF_MONTH);
+	                realMonthS = String.format(Locale.US, "%02d", realMonth);
+	                realDayS = String.format(Locale.US, "%02d", realDay);
+	                
+	            } catch (ParseException e) {
+	                Log.e("gray", "MainActivity.java:showListView, ParseException, " + e.toString());
+	                e.printStackTrace();
+	            }
+	    		
+	            final String vdeleteVideoName = "sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix;
+	            if (isDebug) {
+	            	Log.e("gray", "MainActivity.java:onItemLongClick, cnnVideoName:" + vdeleteVideoName);
+				}
+	            
+	            // show warning dialog to check delete process
+	            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+	            builder.setMessage("confirm to delete file : " + vdeleteVideoName + ".*")
+	                   .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	                       public void onClick(DialogInterface dialog, int id) {
+	                    	   deleteCNNSFilesByName(vdeleteVideoName);
+	                    	   // update list
+	                    	   handler.sendEmptyMessage(1);
+	                       }
+	                   })
+	                   .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+	                       public void onClick(DialogInterface dialog, int id) {
+	                    	   // do nothing
+	                       }
+	                   });
+	            builder.create().show();
+                return true;
+            }
+        }); 
 	}
 	
 	@SuppressLint("HandlerLeak")
@@ -638,6 +743,39 @@ public class MainActivity extends Activity {
 						}).start();
 						
     				} 
+    				break;
+    				
+    			case 3:		// handle blog's variable
+    				if (isDebug) {
+    			    	Log.e("gray", "MainActivity.java:getBlogVaraibles, newestAppVersion:" + newestAppVersion);
+    			    	Log.e("gray", "MainActivity.java:getBlogVaraibles, currentAppVersion:" + currentAppVersion);
+    				}
+    				
+    				if(isNotification){
+    					
+    					showAlertDialog("Notification!", notificationContent);    					
+    					
+    				}
+    				
+    				if(newestAppVersion > currentAppVersion){
+//    				if(true){
+    					
+    					TextView tv_update  = new TextView(MainActivity.this);
+    					tv_update.setMovementMethod(LinkMovementMethod.getInstance());
+    					tv_update.setText(Html.fromHtml(
+    		            		"New version available!<br> " +
+	            				"Please find new one on <a href='https://play.google.com/store/apps/details?id=com.graylin.csnews'><b>Google Play</b></a> " +
+    							"or <a href='http://lkqlinsblog.blogspot.tw/2014/01/android-besr-app-for-cnn-student-news.html'><b>Here</b></a>. <br>"
+    		            		)); 
+    					tv_update.setTextSize(18);
+    					tv_update.setPadding(20, 20, 20, 20);
+    		            new AlertDialog.Builder(MainActivity.this)
+    		            .setTitle("New version notification!")
+    		            .setView(tv_update)
+    		            .show();
+    		            
+    				}
+    				
     				break;
            	}
         }  
@@ -714,6 +852,62 @@ public class MainActivity extends Activity {
 		}
 			
 		waitFlag = true;
+    }
+    
+    public void getBlogVaraibles() throws Exception {
+    	
+    	Object[] resultSNodes;
+    	TagNode resultNode;
+    	
+    	// config cleaner properties
+	    HtmlCleaner htmlCleaner = new HtmlCleaner();
+	    CleanerProperties props = htmlCleaner.getProperties();
+	    props.setAllowHtmlInsideAttributes(false);
+	    props.setAllowMultiWordAttributes(true);
+	    props.setRecognizeUnicodeChars(true);
+	    props.setOmitComments(true);
+	
+	    // create URL object
+	    URL url = new URL(MY_BLOG_URL);
+	    // get HTML page root node
+	    TagNode root = htmlCleaner.clean(url);
+	    
+	    // query XPath
+	    XPATH = "//div[@class='isNotification']//span";
+	    resultSNodes = root.evaluateXPath(XPATH);
+	    resultNode = (TagNode)resultSNodes[0];
+	    isNotification = Boolean.valueOf(resultNode.getText().toString());
+	    
+	    // query XPath
+	    XPATH = "//div[@class='Notification']//span";
+	    resultSNodes = root.evaluateXPath(XPATH);
+	    resultNode = (TagNode)resultSNodes[0];
+	    notificationContent = resultNode.getText().toString();
+	    
+	    // query XPath
+	    XPATH = "//div[@class='isEnableVideo']//span";
+	    resultSNodes = root.evaluateXPath(XPATH);
+	    resultNode = (TagNode)resultSNodes[0];
+	    isEnableVideo = Boolean.valueOf(resultNode.getText().toString());
+	    
+	    // query XPath
+	    XPATH = "//div[@class='newestAppVersion_android']//span";
+	    resultSNodes = root.evaluateXPath(XPATH);
+	    resultNode = (TagNode)resultSNodes[0];
+	    newestAppVersion = Integer.valueOf(resultNode.getText().toString());
+	    
+	    PackageManager manager = getPackageManager();
+	    PackageInfo info = manager.getPackageInfo(getPackageName(), 0);
+	    currentAppVersion = (int) (Float.parseFloat(info.versionName)*100.0);
+	    
+	    if (isDebug) {
+	    	Log.e("gray", "MainActivity.java:getBlogVaraibles, isNotification:" + isNotification);
+	    	Log.e("gray", "MainActivity.java:getBlogVaraibles, notificationContent:" + notificationContent);
+	    	Log.e("gray", "MainActivity.java:getBlogVaraibles, isEnableVideo:" + isEnableVideo);
+	    	Log.e("gray", "MainActivity.java:getBlogVaraibles, newestAppVersion:" + newestAppVersion);
+	    	Log.e("gray", "MainActivity.java:getBlogVaraibles, info.versionName:" + info.versionName);
+	    	Log.e("gray", "MainActivity.java:getBlogVaraibles, currentAppVersion:" + currentAppVersion);
+		}
     }
     
 	public void getCNNSList() throws Exception {
@@ -919,10 +1113,31 @@ public class MainActivity extends Activity {
         dialog.show();
 	}
     
-	public void deleteCNNSFiles(int deleteParameter){
+	public void deleteCNNSFilesByName(String videoname){
+		if (isDebug) {
+			Log.e("gray", "MainActivity.java:deleteCNNSFilesByName, " + "");
+		}
+		
+		// Directory path
+		String path = Environment.getExternalStorageDirectory().getPath()+"/"+Environment.DIRECTORY_DOWNLOADS;
+		File folder = new File(path);
+		File[] listOfFiles = folder.listFiles();
+		
+		if (listOfFiles != null) {
+			for (int i = 0; i < listOfFiles.length; i++) {
+				if (listOfFiles[i].isFile()) {
+					if (listOfFiles[i].getName().contains(videoname)) {
+						listOfFiles[i].delete();
+					}
+				}
+			}
+		}
+	}
+	
+	public void deleteCNNSFilesByTime(int deleteParameter){
 		
 		if (isDebug) {
-			Log.e("gray", "MainActivity.java:deleteCNNSFiles, " + "");
+			Log.e("gray", "MainActivity.java:deleteCNNSFilesByTime, " + "");
 		}
 		
 		// Directory path
@@ -998,6 +1213,15 @@ public class MainActivity extends Activity {
 		}
         switch (item.getItemId()) {
         
+        case R.id.action_rank:
+        	
+        	try {
+        		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        	} catch (android.content.ActivityNotFoundException anfe) {
+        		startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("http://play.google.com/store/apps/details?id=" + appPackageName)));
+        	}
+        	
+	        break;
         
         case R.id.action_update_list:
         	
@@ -1033,13 +1257,17 @@ public class MainActivity extends Activity {
         	TextView tv  = new TextView(this);
             tv.setMovementMethod(LinkMovementMethod.getInstance());
             tv.setText(Html.fromHtml(
-            		"<b>What's new in this version (2.17)?</b><br><br>" +
+            		"<b>What's new in this version (3.01)?</b><br><br>" +
+            		"1. Long press on list to delete.<br>" +
+            		"2. Re-arrange transcript.<br>" +
+            		"<br>" +
+            		"version (3.00) update:<br>" +
     				"1. You can edit note now.<br>" +
     				"2. You can set how many times to stop at background mode.<br>" +
     				"3. You can set theme as random.<br>" +
 					"<br>" +
 					"<font color='red'><b>iOS version of this app was published at Apple store, " +
-					"please search it use keyword : \"10min News\" or \"CNN Student News\"</b></font><br>" +
+					"please search it use keyword : \"10minNews\" or \"CNN Student News\"</b></font><br>" +
 					"<br>" +
 					"Have any idea, suggestion or bug report just mail me :<br>" +
 					"<a href='mailto:llkkqq@gmail.com'>llkkqq@gmail.com (Gray Lin)</a><br>" +
@@ -1080,7 +1308,7 @@ public class MainActivity extends Activity {
         			"default is disable.<br><br>" +
         			"*********************<br>" +
         			"If you like this app or think it's useful, please help to rank it at " +
-        			"<a href='https://play.google.com/store/apps/details?id=com.graylin.10minNews'><b>Google Play</b></a>, thanks~^^<br>" +
+        			"<a href='https://play.google.com/store/apps/details?id="+appPackageName+"'"+"><b>Google Play</b></a>, thanks~^^<br>" +
         			"*********************<br>"
             		)); 
             tv.setTextSize(18);

@@ -6,4 +6,16 @@
         android:showAsAction="never"
         android:title="@string/action_share_note"/>
 
+    <item
+        android:id="@+id/action_show_kb"
+        android:orderInCategory="101"
+        android:showAsAction="never"
+        android:title="@string/action_show_kb"/>
+    
+    <item
+        android:id="@+id/action_hide_kb"
+        android:orderInCategory="101"
+        android:showAsAction="never"
+        android:title="@string/action_hide_kb"/>
+
 </menu>
