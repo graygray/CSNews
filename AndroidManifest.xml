@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.graylin.csnews"
-    android:versionCode="301"
-    android:versionName="3.01" >
+    android:versionCode="303"
+    android:versionName="3.03" >
 
     <uses-sdk
-        android:minSdkVersion="9"
+        android:minSdkVersion="14"
         android:targetSdkVersion="19" />
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -40,7 +40,8 @@
         </activity>
         <activity
             android:name="com.graylin.csnews.PlayActivity"
-            android:label="@string/title_activity_play" >
+            android:label="@string/title_activity_play"
+            android:hardwareAccelerated="true" >
         </activity>
         <activity
             android:name="com.google.android.gms.ads.AdActivity"

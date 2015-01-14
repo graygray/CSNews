@@ -3,46 +3,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PlayActivity" >
+    
+	<WebView android:id="@+id/myWebView"   
+		   android:layout_width="match_parent"   
+		   android:layout_height="match_parent"  
+	/>
 
-    <RelativeLayout
-        android:id="@+id/RelativeLayout1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-        
-	    <com.graylin.csnews.MyVideoView
-	        android:id="@+id/videoView_CNNS"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content" />
-	   
-	    <Button
+	<Button
          android:id="@+id/translate_button"
          style="?android:attr/buttonStyleSmall"
          android:layout_width="wrap_content"
          android:layout_height="wrap_content"
          android:layout_alignParentRight="true"
          android:text="@string/string_translate" />
-	    
-	    <TextView
-            android:id="@+id/video_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clickable="true"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="5dp"
-            android:textAllCaps="false"
-            android:textIsSelectable="true"
-            android:layout_alignParentLeft="true"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
-        
-    </RelativeLayout>
-
-
+	
     <ScrollView
         android:id="@+id/scrollView1"
-        android:layout_below="@+id/RelativeLayout1"
+        android:layout_below="@+id/myWebView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" >
 
