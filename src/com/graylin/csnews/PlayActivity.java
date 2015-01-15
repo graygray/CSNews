@@ -86,10 +86,10 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
     
 	public String XPATH = "";
     
-//	public MyVideoView mVideoView;
+	public MyVideoView mVideoView;
 	public EditText mEditText;
-//	public TextView mTV_videoTime;
-//	public ScrollView mSV;
+	public TextView mTV_videoTime;
+	public ScrollView mSV;
 	public ProgressDialog mProgressDialogScript;
 	public ProgressDialog mProgressDialogVideo;
 	public ProgressDialog mProgressDialogTranslate;
@@ -187,17 +187,16 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 		// ADs counter ++
 		SplashScreenActivity.ADsCounter = MainActivity.sharedPrefs.getInt("ADsCounter", 0);
 		SplashScreenActivity.ADsCounter++;
-//		Log.e("gray", "ADsCounter:" + SplashScreenActivity.ADsCounter);
 		MainActivity.sharedPrefsEditor.putInt("ADsCounter", SplashScreenActivity.ADsCounter);
 		MainActivity.sharedPrefsEditor.commit();
 		
-//		mVideoView = (MyVideoView) findViewById(R.id.videoView_CNNS);
-//		videoThresholdX = 5;
-//		videoThresholdY = 50;
+		mVideoView = (MyVideoView) findViewById(R.id.videoView_CNNS);
+		videoThresholdX = 5;
+		videoThresholdY = 50;
 		
 		mEditText = (EditText) findViewById(R.id.tv_webContent);
-//		mTV_videoTime = (TextView) findViewById(R.id.video_time);
-//		mSV = (ScrollView) findViewById(R.id.scrollView1);
+		mTV_videoTime = (TextView) findViewById(R.id.video_time);
+		mSV = (ScrollView) findViewById(R.id.scrollView1);
 		
         if (!isRotate && getResources().getConfiguration().orientation != MainActivity.previousOrientation) {
 			// auto rotate
@@ -216,25 +215,25 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 		} else {
 			stopPosition = 0;
 		}
-//		videoWidth = 0;
-//		videoHeight = 0;
-//		mVideoView.setOnCompletionListener(this);
-//		mVideoView.setOnPreparedListener(this);
+		videoWidth = 0;
+		videoHeight = 0;
+		mVideoView.setOnCompletionListener(this);
+		mVideoView.setOnPreparedListener(this);
 		isDestroy = false;
 		
 		// change layout to avoid blocking all screen
-//        RelativeLayout.LayoutParams videoviewlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 10);
-//        mVideoView.setLayoutParams(videoviewlp);
-//        mVideoView.invalidate();
+        RelativeLayout.LayoutParams videoviewlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, 10);
+        mVideoView.setLayoutParams(videoviewlp);
+        mVideoView.invalidate();
         
-//		cnnVideoPath = MainActivity.getVideoAddress();
+		cnnVideoPath = MainActivity.getVideoAddress();
         cnnScriptPath = MainActivity.getScriptAddress();
 		cnnWebPath = MainActivity.getWebAddress();
-//		if (MainActivity.isDebug) {
-//			Log.e("gray", "PlayActivity.java: START ===============");
-//			Log.e("gray", "PlayActivity.java: cnnVideoPath : " + cnnVideoPath);
-//			Log.e("gray", "PlayActivity.java: cnnScriptPath : " + cnnScriptPath);
-//		}
+		if (MainActivity.isDebug) {
+			Log.e("gray", "PlayActivity.java: START ===============");
+			Log.e("gray", "PlayActivity.java: cnnVideoPath : " + cnnVideoPath);
+			Log.e("gray", "PlayActivity.java: cnnScriptPath : " + cnnScriptPath);
+		}
 		
 		cnnVideoName = MainActivity.cnnVideoName;
 		NoteFileName = cnnVideoName + ".cnnsNote.txt";
@@ -245,99 +244,99 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 			// video already download
 			isVideoFileExit = true;
 			cnnVideoPath = Environment.getExternalStorageDirectory().getPath()+"/"+Environment.DIRECTORY_DOWNLOADS+"/"+cnnVideoName;
-//			playVideo();
+			playVideo();
 			
 		} else {
 			// video not exist, play from CNNS
 			isVideoFileExit = false;
 			if (isNetworkAvailable()){
 				
-//				new Thread(new Runnable() 
-//				{ 
-//					@Override
-//					public void run() 
-//					{ 
-//						try {
-//							getDownloadLink();
-//						} catch (Exception e) {
-//							Log.e("gray", "getDownloadLink, Exception e:" + e.toString());
-//							e.printStackTrace();
-//						}
-//					} 
-//				}).start();
+				new Thread(new Runnable() 
+				{ 
+					@Override
+					public void run() 
+					{ 
+						try {
+							getDownloadLink();
+						} catch (Exception e) {
+							Log.e("gray", "getDownloadLink, Exception e:" + e.toString());
+							e.printStackTrace();
+						}
+					} 
+				}).start();
 				
-//				if (!checkVideoPath(MainActivity.videoAddressString5).equalsIgnoreCase("not exist")) {
-//					cnnVideoPath = MainActivity.videoAddressString5;
-//				} else if (!checkVideoPath(MainActivity.videoAddressString4).equalsIgnoreCase("not exist")) {
-//					cnnVideoPath = MainActivity.videoAddressString4;
-//				} else if (!checkVideoPath(MainActivity.videoAddressString).equalsIgnoreCase("not exist")) {
-//					cnnVideoPath = MainActivity.videoAddressString;
-//				} else if (!checkVideoPath(MainActivity.videoAddressString2).equalsIgnoreCase("not exist")) {
-//					cnnVideoPath = MainActivity.videoAddressString2;
-//				} else if (!checkVideoPath(MainActivity.videoAddressString3).equalsIgnoreCase("not exist")) {
-//					cnnVideoPath = MainActivity.videoAddressString3;
-//				} else {
-//					try {
-//						Thread.sleep(2000);
-//					} catch (InterruptedException e) {
-//						e.printStackTrace();
-//					}
-//					Log.e("gray", "final download link:" + MainActivity.videoAddressString6);
-//					if (MainActivity.videoAddressString6.equalsIgnoreCase("")) {
-//						TextView tv2  = new TextView(this);
-//						tv2.setMovementMethod(LinkMovementMethod.getInstance());
-//						tv2.setText(Html.fromHtml(
-//								"<b>Vedio file not found</b><br>" 
-//								)); 
-//						tv2.setTextSize(18);
-//						tv2.setPadding(20, 20, 20, 20);
-//						new AlertDialog.Builder(PlayActivity.this)
-//						.setTitle("Error!")
-//						.setView(tv2)
-//						.show();
-//						
-//						return;
-//					} else {
-//						cnnVideoPath = MainActivity.videoAddressString6;
-//					}
-//				}
+				if (!checkVideoPath(MainActivity.videoAddressString5).equalsIgnoreCase("not exist")) {
+					cnnVideoPath = MainActivity.videoAddressString5;
+				} else if (!checkVideoPath(MainActivity.videoAddressString4).equalsIgnoreCase("not exist")) {
+					cnnVideoPath = MainActivity.videoAddressString4;
+				} else if (!checkVideoPath(MainActivity.videoAddressString).equalsIgnoreCase("not exist")) {
+					cnnVideoPath = MainActivity.videoAddressString;
+				} else if (!checkVideoPath(MainActivity.videoAddressString2).equalsIgnoreCase("not exist")) {
+					cnnVideoPath = MainActivity.videoAddressString2;
+				} else if (!checkVideoPath(MainActivity.videoAddressString3).equalsIgnoreCase("not exist")) {
+					cnnVideoPath = MainActivity.videoAddressString3;
+				} else {
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					Log.e("gray", "final download link:" + MainActivity.videoAddressString6);
+					if (MainActivity.videoAddressString6.equalsIgnoreCase("")) {
+						TextView tv2  = new TextView(this);
+						tv2.setMovementMethod(LinkMovementMethod.getInstance());
+						tv2.setText(Html.fromHtml(
+								"<b>Vedio file not found</b><br>" 
+								)); 
+						tv2.setTextSize(18);
+						tv2.setPadding(20, 20, 20, 20);
+						new AlertDialog.Builder(PlayActivity.this)
+						.setTitle("Error!")
+						.setView(tv2)
+						.show();
+						
+						return;
+					} else {
+						cnnVideoPath = MainActivity.videoAddressString6;
+					}
+				}
 				
 				// download video
 				// if Enable Download && video file not exist, download it
-//				if (MainActivity.isEnableDownload && isDownloadManagerAvailable(getApplicationContext()) ){
-//					
-//					if (MainActivity.isDebug) {
-//						Log.e("gray", "PlayActivity.java:onCreate, start to download video...");
-//					}
-//					String url = cnnVideoPath;
-//					DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-//					request.setDescription("to " + Environment.getExternalStorageDirectory().getPath()+"/"+Environment.DIRECTORY_DOWNLOADS);
-//					request.setTitle(cnnVideoName);
-//					// in order for this if to run, you must use the android 3.2 to compile your app
-//					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-//						
-//						if (MainActivity.isDebug) {
-//							Log.e("gray", "PlayActivity.java: Build.VERSION.SDK_INT:" + Build.VERSION.SDK_INT);
-//							Log.e("gray", "PlayActivity.java: Build.VERSION_CODES.HONEYCOMB:" + Build.VERSION_CODES.HONEYCOMB);
-//						}
-//						request.allowScanningByMediaScanner();
-//						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
-////						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-//					} else {
-//						request.setShowRunningNotification(true);
-//					}
-//					
-//					request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, cnnVideoName);
-//					
-//					// get download service and enqueue file
-//					DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-//					manager.enqueue(request);
-//				}
+				if (MainActivity.isEnableDownload && isDownloadManagerAvailable(getApplicationContext()) ){
+					
+					if (MainActivity.isDebug) {
+						Log.e("gray", "PlayActivity.java:onCreate, start to download video...");
+					}
+					String url = cnnVideoPath;
+					DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+					request.setDescription("to " + Environment.getExternalStorageDirectory().getPath()+"/"+Environment.DIRECTORY_DOWNLOADS);
+					request.setTitle(cnnVideoName);
+					// in order for this if to run, you must use the android 3.2 to compile your app
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+						
+						if (MainActivity.isDebug) {
+							Log.e("gray", "PlayActivity.java: Build.VERSION.SDK_INT:" + Build.VERSION.SDK_INT);
+							Log.e("gray", "PlayActivity.java: Build.VERSION_CODES.HONEYCOMB:" + Build.VERSION_CODES.HONEYCOMB);
+						}
+						request.allowScanningByMediaScanner();
+						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+//						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+					} else {
+						request.setShowRunningNotification(true);
+					}
+					
+					request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, cnnVideoName);
+					
+					// get download service and enqueue file
+					DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+					manager.enqueue(request);
+				}
 				
-//				playVideo();
+				playVideo();
 				
 				// load web view
-				showWebView();
+//				showWebView();
 				
 			} else {
 				
@@ -575,193 +574,193 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 		myWebView.loadUrl(cnnWebPath);
 	}
 	
-//	public void playVideo(){
-//		
-//		showProcessDialog(1, "Please wait", "Loading video...");
-//        
-//		/*
-//		 * Alternatively,for streaming media you can use
-//		 * mVideoView.setVideoURI(Uri.parse(URLstring));
-//		 */
-//		mVideoView.setVideoPath(cnnVideoPath);
-//		// mVideoView.setVideoURI(Uri.parse("android.resource://ss.ss/"+R.raw.main));
-//
-//		// control bar
-//		if (MainActivity.isVideoControlBar) {
-//			mVideoView.setMediaController(new MediaController(this));
-//		}
-//		// mVideoView.requestFocus();
-//		// start play
-//		mVideoView.start();
-//		
-//		mVideoView.setOnTouchListener(new OnTouchListener() {
-//			
-//			public boolean onTouch(View v, MotionEvent event) {
-//				if (MainActivity.isDebug) {
-//					Log.e("gray", "PlayActivity.java: onTouch");
-//				}
-//		    	int action = MotionEventCompat.getActionMasked(event);
-//		    	
-//		    	// show video timestamp
-//		    	if (!MainActivity.isVideoControlBar) {
-//		    		mTV_videoTime.setVisibility(View.VISIBLE);
-//		    		mTV_videoTime.setText(milliSecondsToTimer(mVideoView.getCurrentPosition()));
-//		    	}
-//            	
-//		        switch(action) {
-//		            case (MotionEvent.ACTION_DOWN) :
-//		            	if (MainActivity.isDebug) {
-//		            		Log.e("gray", "PlayActivity.java: onTouch , Action was DOWN, " + event.getRawX());
-//		            	}
-//		            	previousX = event.getRawX();
-//		            	previousY = event.getRawY();
-//		            	
-//		            	if ( previousX <= (videoWidth/6) ) {
-//		            		if (MainActivity.isDebug) {
-//								Log.e("gray", "PlayActivity.java:playVideo, " + "Left");
-//							}
-//		            		clickZoneRight = false;
-//		            		clickZoneCenter = false;
-//		            		clickZoneLeft = true;
-//						} else if ( previousX > (videoWidth/6) && previousX < (videoWidth*5/6) ) {
-//							if (MainActivity.isDebug) {
-//								Log.e("gray", "PlayActivity.java:playVideo, " + "Center");
-//							}
-//							clickZoneRight = false;
-//		            		clickZoneCenter = true;
-//		            		clickZoneLeft = false;
-//						} else {
-//							if (MainActivity.isDebug) {
-//								Log.e("gray", "PlayActivity.java:playVideo, " + "Right");
-//							}
-//							clickZoneRight = true;
-//		            		clickZoneCenter = false;
-//		            		clickZoneLeft = false;
-//						}
-//		            	
-//		                return true;
-//		            case (MotionEvent.ACTION_MOVE) :
-//		            	if (MainActivity.isDebug) {
-//		            		Log.e("gray", "PlayActivity.java: onTouch , Action was MOVE, " + event.getRawX());
-//		            	}
-//		            	currentX = event.getRawX();
-//		            	currentY = event.getRawY();
-//		            	
-//		            	if (currentX - previousX > videoThresholdX) {
-//							// move to right
-//		            		if (MainActivity.isDebug) {
-//		            			Log.e("gray", "PlayActivity.java: playVideo , move to right.");
-//		            		}
-//		            		stopPosition = mVideoView.getCurrentPosition();
-//		            		mVideoView.seekTo(stopPosition + MainActivity.swipeTime*1000);
-//		            		previousX = currentX;
-//		            		isVideoTouchMove = true;
-//						} else if (currentX - previousX < -videoThresholdX) {
-//							// move to left
-//							if (MainActivity.isDebug) {
-//								Log.e("gray", "PlayActivity.java: playVideo , move to left.");
-//							}
-//							stopPosition = mVideoView.getCurrentPosition();
-//							mVideoView.seekTo(stopPosition - MainActivity.swipeTime*1000);
-//							previousX = currentX;
-//							isVideoTouchMove = true;
-//							
-//						} else {
-//							if (MainActivity.isDebug) {
-//								Log.e("gray", "PlayActivity.java: playVideo, X not over the threshold ");
-//							}
-//						}
-//		            	
-//		            	if (currentY - previousY > videoThresholdY) {
-//		            		videoWidth = videoWidth + (int)(videoWidth * 0.1);
-//		            		videoHeight = videoHeight + (int)(videoHeight * 0.1);
-//		            		
-//		            		mVideoView.setDimensions(videoWidth, videoHeight);
-//		            		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
-//		            		
-//				            previousY = currentY;
-//							isVideoTouchMove = true;
-//							
-//						} else if (currentY - previousY < -videoThresholdY) {
-//							videoWidth = videoWidth - (int)(videoWidth * 0.1);
-//		            		videoHeight = videoHeight - (int)(videoHeight * 0.1);
-//		            		
-//				        	mVideoView.setDimensions(videoWidth, videoHeight);
-//		            		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
-//		            		
-//				            previousY = currentY;
-//							isVideoTouchMove = true;
-//							
-//						} else {
-//							if (MainActivity.isDebug) {
-//								Log.e("gray", "PlayActivity.java: playVideo, Y not over the threshold ");
-//							}
-//						}
-//		            	
-//		                return true;
-//		            case (MotionEvent.ACTION_UP) :
-//		            	if (MainActivity.isDebug) {
-//		            		Log.e("gray", "PlayActivity.java: onTouch , Action was UP");
-//		            	}
-//			            // reset variable
-//			            currentX = 0;
-//			            currentY = 0;
-//			            previousX = 0;
-//			            previousY = 0;
-//			            
-//			            if (!MainActivity.isVideoControlBar) {
-//			            	mTV_videoTime.setVisibility(View.GONE);
-//			            }
-//			            
-//			            if (!isVideoTouchMove) {
-//			            	if (clickZoneLeft) {
-//			            		// click at video left
-//			            		stopPosition = mVideoView.getCurrentPosition();
-//								mVideoView.seekTo(stopPosition - MainActivity.swipeTime*1000);
-//							} else if (clickZoneCenter) {
-//								// click at video center
-//								if (mVideoView.isPlaying()) {
-//									mVideoView.pause();
-//								} else {
-//									if(!flagOnPause){
-//										stopPosition = mVideoView.getCurrentPosition();
-//									}
-//									flagOnPause = false;
-//									mVideoView.seekTo(stopPosition);
-//									mVideoView.start();
-//								}
-//							} else {
-//								// click at video right
-//								stopPosition = mVideoView.getCurrentPosition();
-//			            		mVideoView.seekTo(stopPosition + MainActivity.swipeTime*1000);
-//							}
-//			            	
-//				            return false;
-//						} else {
-//							isVideoTouchMove = false;
-//							return true;
-//						}
-//			            
-//		            case (MotionEvent.ACTION_CANCEL) :
-//		            	if (MainActivity.isDebug) {
-//		            		Log.e("gray", "PlayActivity.java: onTouch , Action was CANCEL");
-//		            	}
-//		                return true;
-//		            case (MotionEvent.ACTION_OUTSIDE) :
-//		            	if (MainActivity.isDebug) {
-//		            		Log.e("gray", "PlayActivity.java: onTouch , Movement occurred outside bounds " +
-//		            				"of current screen element");
-//		            	}
-//		                return true;      
-//		            default : 
-//		            	if (MainActivity.isDebug) {
-//		            		Log.e("gray", "PlayActivity.java: onTouch , default");
-//		            	}
-//		                return true;
-//		        }      
-//		    }
-//		});
-//	}
+	public void playVideo(){
+		
+		showProcessDialog(1, "Please wait", "Loading video...");
+        
+		/*
+		 * Alternatively,for streaming media you can use
+		 * mVideoView.setVideoURI(Uri.parse(URLstring));
+		 */
+		mVideoView.setVideoPath(cnnVideoPath);
+		// mVideoView.setVideoURI(Uri.parse("android.resource://ss.ss/"+R.raw.main));
+
+		// control bar
+		if (MainActivity.isVideoControlBar) {
+			mVideoView.setMediaController(new MediaController(this));
+		}
+		// mVideoView.requestFocus();
+		// start play
+		mVideoView.start();
+		
+		mVideoView.setOnTouchListener(new OnTouchListener() {
+			
+			public boolean onTouch(View v, MotionEvent event) {
+				if (MainActivity.isDebug) {
+					Log.e("gray", "PlayActivity.java: onTouch");
+				}
+		    	int action = MotionEventCompat.getActionMasked(event);
+		    	
+		    	// show video timestamp
+		    	if (!MainActivity.isVideoControlBar) {
+		    		mTV_videoTime.setVisibility(View.VISIBLE);
+		    		mTV_videoTime.setText(milliSecondsToTimer(mVideoView.getCurrentPosition()));
+		    	}
+            	
+		        switch(action) {
+		            case (MotionEvent.ACTION_DOWN) :
+		            	if (MainActivity.isDebug) {
+		            		Log.e("gray", "PlayActivity.java: onTouch , Action was DOWN, " + event.getRawX());
+		            	}
+		            	previousX = event.getRawX();
+		            	previousY = event.getRawY();
+		            	
+		            	if ( previousX <= (videoWidth/6) ) {
+		            		if (MainActivity.isDebug) {
+								Log.e("gray", "PlayActivity.java:playVideo, " + "Left");
+							}
+		            		clickZoneRight = false;
+		            		clickZoneCenter = false;
+		            		clickZoneLeft = true;
+						} else if ( previousX > (videoWidth/6) && previousX < (videoWidth*5/6) ) {
+							if (MainActivity.isDebug) {
+								Log.e("gray", "PlayActivity.java:playVideo, " + "Center");
+							}
+							clickZoneRight = false;
+		            		clickZoneCenter = true;
+		            		clickZoneLeft = false;
+						} else {
+							if (MainActivity.isDebug) {
+								Log.e("gray", "PlayActivity.java:playVideo, " + "Right");
+							}
+							clickZoneRight = true;
+		            		clickZoneCenter = false;
+		            		clickZoneLeft = false;
+						}
+		            	
+		                return true;
+		            case (MotionEvent.ACTION_MOVE) :
+		            	if (MainActivity.isDebug) {
+		            		Log.e("gray", "PlayActivity.java: onTouch , Action was MOVE, " + event.getRawX());
+		            	}
+		            	currentX = event.getRawX();
+		            	currentY = event.getRawY();
+		            	
+		            	if (currentX - previousX > videoThresholdX) {
+							// move to right
+		            		if (MainActivity.isDebug) {
+		            			Log.e("gray", "PlayActivity.java: playVideo , move to right.");
+		            		}
+		            		stopPosition = mVideoView.getCurrentPosition();
+		            		mVideoView.seekTo(stopPosition + MainActivity.swipeTime*1000);
+		            		previousX = currentX;
+		            		isVideoTouchMove = true;
+						} else if (currentX - previousX < -videoThresholdX) {
+							// move to left
+							if (MainActivity.isDebug) {
+								Log.e("gray", "PlayActivity.java: playVideo , move to left.");
+							}
+							stopPosition = mVideoView.getCurrentPosition();
+							mVideoView.seekTo(stopPosition - MainActivity.swipeTime*1000);
+							previousX = currentX;
+							isVideoTouchMove = true;
+							
+						} else {
+							if (MainActivity.isDebug) {
+								Log.e("gray", "PlayActivity.java: playVideo, X not over the threshold ");
+							}
+						}
+		            	
+		            	if (currentY - previousY > videoThresholdY) {
+		            		videoWidth = videoWidth + (int)(videoWidth * 0.1);
+		            		videoHeight = videoHeight + (int)(videoHeight * 0.1);
+		            		
+		            		mVideoView.setDimensions(videoWidth, videoHeight);
+		            		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
+		            		
+				            previousY = currentY;
+							isVideoTouchMove = true;
+							
+						} else if (currentY - previousY < -videoThresholdY) {
+							videoWidth = videoWidth - (int)(videoWidth * 0.1);
+		            		videoHeight = videoHeight - (int)(videoHeight * 0.1);
+		            		
+				        	mVideoView.setDimensions(videoWidth, videoHeight);
+		            		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
+		            		
+				            previousY = currentY;
+							isVideoTouchMove = true;
+							
+						} else {
+							if (MainActivity.isDebug) {
+								Log.e("gray", "PlayActivity.java: playVideo, Y not over the threshold ");
+							}
+						}
+		            	
+		                return true;
+		            case (MotionEvent.ACTION_UP) :
+		            	if (MainActivity.isDebug) {
+		            		Log.e("gray", "PlayActivity.java: onTouch , Action was UP");
+		            	}
+			            // reset variable
+			            currentX = 0;
+			            currentY = 0;
+			            previousX = 0;
+			            previousY = 0;
+			            
+			            if (!MainActivity.isVideoControlBar) {
+			            	mTV_videoTime.setVisibility(View.GONE);
+			            }
+			            
+			            if (!isVideoTouchMove) {
+			            	if (clickZoneLeft) {
+			            		// click at video left
+			            		stopPosition = mVideoView.getCurrentPosition();
+								mVideoView.seekTo(stopPosition - MainActivity.swipeTime*1000);
+							} else if (clickZoneCenter) {
+								// click at video center
+								if (mVideoView.isPlaying()) {
+									mVideoView.pause();
+								} else {
+									if(!flagOnPause){
+										stopPosition = mVideoView.getCurrentPosition();
+									}
+									flagOnPause = false;
+									mVideoView.seekTo(stopPosition);
+									mVideoView.start();
+								}
+							} else {
+								// click at video right
+								stopPosition = mVideoView.getCurrentPosition();
+			            		mVideoView.seekTo(stopPosition + MainActivity.swipeTime*1000);
+							}
+			            	
+				            return false;
+						} else {
+							isVideoTouchMove = false;
+							return true;
+						}
+			            
+		            case (MotionEvent.ACTION_CANCEL) :
+		            	if (MainActivity.isDebug) {
+		            		Log.e("gray", "PlayActivity.java: onTouch , Action was CANCEL");
+		            	}
+		                return true;
+		            case (MotionEvent.ACTION_OUTSIDE) :
+		            	if (MainActivity.isDebug) {
+		            		Log.e("gray", "PlayActivity.java: onTouch , Movement occurred outside bounds " +
+		            				"of current screen element");
+		            	}
+		                return true;      
+		            default : 
+		            	if (MainActivity.isDebug) {
+		            		Log.e("gray", "PlayActivity.java: onTouch , default");
+		            	}
+		                return true;
+		        }      
+		    }
+		});
+	}
 	
 	public boolean getTranslateStringByJsoup(String queryString, String classString) {
 		
@@ -1295,18 +1294,6 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 	        		new AlertDialog.Builder(PlayActivity.this).setTitle(srcText).setIcon( 
 	        				android.R.drawable.ic_dialog_info).setMessage(translatedText)
 	        				.show();
-		        	
-//		        	TextView tv  = new TextView(PlayActivity.this);
-//		            tv.setMovementMethod(LinkMovementMethod.getInstance());
-//		            tv.setText(Html.fromHtml(
-//		            		translatedText+"<br>"
-//		            		)); 
-//		            tv.setTextSize(18);
-//		            tv.setPadding(20, 20, 20, 20);
-//		            new AlertDialog.Builder(PlayActivity.this)
-//		            .setTitle(srcText)
-//		            .setView(tv)
-//		            .show();
 		        }
 				
 				try {
@@ -1354,12 +1341,12 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 				// reload the script
 				setResultText(cnnScriptContent);
 				// to last position
-//				mSV.postDelayed(new Runnable() {
-//					@Override
-//					public void run() {
-//						mSV.scrollTo(0, scrollViewPosition);
-//					}
-//				}, 2000);
+				mSV.postDelayed(new Runnable() {
+					@Override
+					public void run() {
+						mSV.scrollTo(0, scrollViewPosition);
+					}
+				}, 2000);
 				
 				break;
 				
@@ -1617,17 +1604,17 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 			Log.e("gray", "PlayActivity.java: videoHeight : " + videoHeight);
 		}
 		
-//		// change layout to WRAP_CONTENT
-//        RelativeLayout.LayoutParams videoviewlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
-//        mVideoView.setLayoutParams(videoviewlp);
-//        mVideoView.invalidate();
-//        
-//        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
-//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-//        mVideoView.setDimensions(videoWidth, videoHeight);
-//		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
-//		
-//		mVideoView.seekTo(stopPosition);
+		// change layout to WRAP_CONTENT
+        RelativeLayout.LayoutParams videoviewlp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        mVideoView.setLayoutParams(videoviewlp);
+        mVideoView.invalidate();
+        
+        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        mVideoView.setDimensions(videoWidth, videoHeight);
+		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
+		
+		mVideoView.seekTo(stopPosition);
 		
         try {
         	mProgressDialogVideo.dismiss();
@@ -1684,7 +1671,7 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 		}
 		
 		// refresh the script
-//		scrollViewPosition = mSV.getScrollY();
+		scrollViewPosition = mSV.getScrollY();
 		handler.sendEmptyMessage(3);
 	}
 	
@@ -1764,10 +1751,10 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 	
 	protected void onPause() {
         super.onPause();
-//        stopPosition = mVideoView.getCurrentPosition();
-//
-//        // remember last read position 
-//		scrollViewPosition = mSV.getScrollY();
+        stopPosition = mVideoView.getCurrentPosition();
+
+        // remember last read position 
+		scrollViewPosition = mSV.getScrollY();
      			
         if (MainActivity.isDebug) {
         	Log.e("gray", "PlayActivity.java: onPause ");
@@ -1776,30 +1763,30 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
         
         flagOnPause = true;
         
-//        isVideoPlaying = mVideoView.isPlaying();
+        isVideoPlaying = mVideoView.isPlaying();
         
-//    	waitTimer = new Timer();
-//    	waitTimer.schedule(new TimerTask() {
-//    		@Override
-//    		public void run() {
-//    			runOnUiThread(new Runnable() {
-//    				@Override
-//    				public void run() {
-//    					if (!isDestroy) {
-//							
-//    						if (isVideoPlaying && !(isRotate || getResources().getConfiguration().orientation != MainActivity.previousOrientation) ) {
-//    							// if video is playing & app goes to background, then start background service
-//    							Log.e("gray", "PlayActivity.java:onPause, " + "start background service");
-//    							playVideoServiceIntent = new Intent(PlayActivity.this, PlayVideoService.class);
-//    							startService(playVideoServiceIntent);
-//    							isStopService = false;
-//    						}
-//    						mVideoView.pause();
-//						}
-//    				}
-//    			});
-//    		}
-//    	}, 1000);
+    	waitTimer = new Timer();
+    	waitTimer.schedule(new TimerTask() {
+    		@Override
+    		public void run() {
+    			runOnUiThread(new Runnable() {
+    				@Override
+    				public void run() {
+    					if (!isDestroy) {
+							
+    						if (isVideoPlaying && !(isRotate || getResources().getConfiguration().orientation != MainActivity.previousOrientation) ) {
+    							// if video is playing & app goes to background, then start background service
+    							Log.e("gray", "PlayActivity.java:onPause, " + "start background service");
+    							playVideoServiceIntent = new Intent(PlayActivity.this, PlayVideoService.class);
+    							startService(playVideoServiceIntent);
+    							isStopService = false;
+    						}
+    						mVideoView.pause();
+						}
+    				}
+    			});
+    		}
+    	}, 1000);
     	
         if (myWebView != null) {
         	myWebView.onPause();
@@ -1850,28 +1837,28 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 			Log.e("gray", "PlayActivity.java:onResume, stopPosition:" + stopPosition);
 		}
 		
-//		if (isVideoFileExit) {
-//			mVideoView.setDimensions(displayWidth, displayHeight);
-//		} else {
-//			mVideoView.setDimensions(1, 1);
-//		}
-//		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
-//		
-//		mVideoView.seekTo(stopPosition);
-//
-//		if (isVideoPlaying) {
-//			mVideoView.start();
-//		} else {
-//			mVideoView.resume();
-//		}
-//		
-//		// to previous position
-//		mSV.postDelayed(new Runnable() {
-//			@Override
-//			public void run() {
-//				mSV.scrollTo(0, scrollViewPosition);
-//			}
-//		}, 2000);
+		if (isVideoFileExit) {
+			mVideoView.setDimensions(displayWidth, displayHeight);
+		} else {
+			mVideoView.setDimensions(1, 1);
+		}
+		mVideoView.getHolder().setFixedSize(videoWidth, videoHeight);
+		
+		mVideoView.seekTo(stopPosition);
+
+		if (isVideoPlaying) {
+			mVideoView.start();
+		} else {
+			mVideoView.resume();
+		}
+		
+		// to previous position
+		mSV.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				mSV.scrollTo(0, scrollViewPosition);
+			}
+		}, 2000);
 		
 	}
 	
@@ -1954,17 +1941,17 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
 				Log.e("gray", "PlayActivity.java:onOptionsItemSelected, case R.id.action_rotate_screen");
 			}
 			
-//			isRotate = true;
-//			// Get current screen orientation
-//			int orientation = getResources().getConfiguration().orientation;
-//			switch (orientation) {
-//			case Configuration.ORIENTATION_PORTRAIT:
-//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-//				break;
-//			case Configuration.ORIENTATION_LANDSCAPE:
-//				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-//				break;
-//			}
+			isRotate = true;
+			// Get current screen orientation
+			int orientation = getResources().getConfiguration().orientation;
+			switch (orientation) {
+			case Configuration.ORIENTATION_PORTRAIT:
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+				break;
+			case Configuration.ORIENTATION_LANDSCAPE:
+				setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+				break;
+			}
 
 			break;
 			
@@ -1984,27 +1971,27 @@ public class PlayActivity extends Activity implements OnCompletionListener, OnPr
             
         case R.id.action_rough_position:
 
-//        	double roughPosition = 0.0;
-//        	int totalHight;
-//        	int totalVideoLength, currentVideoPosition;
-//        	
-//        	totalHight = mEditText.getHeight();
-//        	totalVideoLength = mVideoView.getDuration();
-//        	currentVideoPosition = mVideoView.getCurrentPosition();
-//        	roughPosition = (double)currentVideoPosition * (double)totalHight / (double)totalVideoLength;
-//        	
-//        	if (MainActivity.isDebug) {
-//        		Log.e("gray", "MainActivity.java:onOptionsItemSelected, case R.id.action_rough_position");
-//        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, totalHight:" + totalHight);
-//        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, totalVideoLength:" + totalVideoLength);
-//        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, currentVideoPosition:" + currentVideoPosition);
-//        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, roughPosition:" + roughPosition);
-//        	}
-//        	
-//        	mSV.scrollTo(0, (int)roughPosition);
+        	double roughPosition = 0.0;
+        	int totalHight;
+        	int totalVideoLength, currentVideoPosition;
+        	
+        	totalHight = mEditText.getHeight();
+        	totalVideoLength = mVideoView.getDuration();
+        	currentVideoPosition = mVideoView.getCurrentPosition();
+        	roughPosition = (double)currentVideoPosition * (double)totalHight / (double)totalVideoLength;
+        	
+        	if (MainActivity.isDebug) {
+        		Log.e("gray", "MainActivity.java:onOptionsItemSelected, case R.id.action_rough_position");
+        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, totalHight:" + totalHight);
+        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, totalVideoLength:" + totalVideoLength);
+        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, currentVideoPosition:" + currentVideoPosition);
+        		Log.e("gray", "PlayActivity.java:onOptionsItemSelected, roughPosition:" + roughPosition);
+        	}
+        	
+        	mSV.scrollTo(0, (int)roughPosition);
             break;
             
-        // for test
+          // for test
 //        case R.id.action_test:
 //
 //        	Log.e("gray", "PlayActivity.java:onOptionsItemSelected, sv.getScrollX():" + mSV.getScrollX());

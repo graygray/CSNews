@@ -427,22 +427,22 @@ containing a value of this type.
         public static final int ADLayout=0x7f0c0015;
         public static final int ADLayoutNote=0x7f0c0018;
         public static final int ADLayoutNoteList=0x7f0c001a;
-        public static final int ItemImage_news=0x7f0c0023;
-        public static final int ItemImage_video=0x7f0c0024;
-        public static final int ItemTitle=0x7f0c0022;
+        public static final int ItemImage_news=0x7f0c0024;
+        public static final int ItemImage_video=0x7f0c0025;
+        public static final int ItemTitle=0x7f0c0023;
         public static final int RelativeLayout1=0x7f0c001b;
-        public static final int action_hide_kb=0x7f0c002c;
-        public static final int action_info=0x7f0c0026;
-        public static final int action_note=0x7f0c002e;
-        public static final int action_qa=0x7f0c0027;
-        public static final int action_rank=0x7f0c0029;
-        public static final int action_rotate_screen=0x7f0c002d;
-        public static final int action_rough_position=0x7f0c002f;
-        public static final int action_settings=0x7f0c0025;
-        public static final int action_share_note=0x7f0c002a;
-        public static final int action_show_kb=0x7f0c002b;
-        public static final int action_update_list=0x7f0c0028;
-        public static final int admobSettingLayout=0x7f0c0021;
+        public static final int action_hide_kb=0x7f0c002d;
+        public static final int action_info=0x7f0c0027;
+        public static final int action_note=0x7f0c002f;
+        public static final int action_qa=0x7f0c0028;
+        public static final int action_rank=0x7f0c002a;
+        public static final int action_rotate_screen=0x7f0c002e;
+        public static final int action_rough_position=0x7f0c0030;
+        public static final int action_settings=0x7f0c0026;
+        public static final int action_share_note=0x7f0c002b;
+        public static final int action_show_kb=0x7f0c002c;
+        public static final int action_update_list=0x7f0c0029;
+        public static final int admobSettingLayout=0x7f0c0022;
         public static final int book_now=0x7f0c000e;
         public static final int buyButton=0x7f0c000a;
         public static final int buy_now=0x7f0c000f;
@@ -455,6 +455,7 @@ containing a value of this type.
         public static final int mainListView=0x7f0c0014;
         public static final int match_parent=0x7f0c000c;
         public static final int monochrome=0x7f0c0013;
+        public static final int myWebView=0x7f0c0021;
         public static final int none=0x7f0c0001;
         public static final int normal=0x7f0c0002;
         public static final int noteListView=0x7f0c0019;
@@ -481,8 +482,9 @@ containing a value of this type.
         public static final int activity_note=0x7f030001;
         public static final int activity_note_list=0x7f030002;
         public static final int activity_play=0x7f030003;
-        public static final int admob=0x7f030004;
-        public static final int cnn_listview=0x7f030005;
+        public static final int activity_play_web=0x7f030004;
+        public static final int admob=0x7f030005;
+        public static final int cnn_listview=0x7f030006;
     }
     public static final class menu {
         public static final int main=0x7f0b0000;

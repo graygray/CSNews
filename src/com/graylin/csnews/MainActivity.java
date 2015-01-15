@@ -56,9 +56,11 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity {
 	
-//	public static boolean isDebug = false;
-	public static boolean isDebug = true;
+	public static boolean isDebug = false;
+//	public static boolean isDebug = true;
 
+	public static boolean isPodcastAvailable = true;
+	
 	public static boolean isPremium = false;
 	public static boolean isNeedUpdate = false;
 	public static boolean waitFlag = false;
@@ -68,14 +70,20 @@ public class MainActivity extends Activity {
 	public static final int MAX_LIST_ARRAY_SIZE = 20;
 	public static String[] cnnListStringArray = new String [MAX_LIST_ARRAY_SIZE];
 	public static String[] cnnScriptAddrStringArray = new String [MAX_LIST_ARRAY_SIZE];
+	public static String[] cnnWebddrStringArray = new String [MAX_LIST_ARRAY_SIZE];
 	
 	public final String scriptAddressStringPrefix = "http://transcripts.cnn.com/TRANSCRIPTS/";
 	public final String scriptAddressStringPostfix = "/sn.01.html";
 	public static String scriptAddressString = "";
 	public static String webAddressString = "";
 	
-	public final String videoAddressStringPrefix = "http://podcasts.cnn.net/cnn/big/podcasts/studentnews/video/";
-	public final String videoAddressStringPostfix = ".cnn.m4v";
+	public final String videoAddressStringPrefix2014 = "http://podcasts.cnn.net/cnn/big/podcasts/studentnews/video/";
+	public final String videoAddressStringPostfix2014 = ".cnn.m4v";
+	public final String videoAddressStringPrefix2015 = "http://ht.cdn.turner.com/cnn/big/studentnews/";
+	public final String videoAddressStringPostfix2015 = ".cnn_ios_1240.mp4";
+	
+	public final String webAddressPrefix = "http://edition.cnn.com/";
+
 	public static String videoAddressString = "";
 	public static String videoAddressString2 = "";
 	public static String videoAddressString3 = "";
@@ -84,7 +92,6 @@ public class MainActivity extends Activity {
 	public static String videoAddressString6 = "";
 	public static String videoDate = "";
 	
-	public final String webAddressPrefix = "http://edition.cnn.com/";
 	
 	public ListView listView;
 	public ArrayAdapter<String> adapter;
@@ -527,7 +534,11 @@ public class MainActivity extends Activity {
 			}
     		
     		// check if video file already download, or set path to local dir
-    		cnnVideoName = "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix;
+    		if (realYear == 2015) {
+    			cnnVideoName = "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2015;				
+			} else {
+				cnnVideoName = "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2014;				
+			}
     		if (isDebug) {
     			Log.e("gray", "path: " + Environment.getExternalStorageDirectory().getPath()+"/"+Environment.DIRECTORY_DOWNLOADS+cnnVideoName);
 			}
@@ -600,25 +611,35 @@ public class MainActivity extends Activity {
 	                e.printStackTrace();
 	            }
 	    		
-	            cnnVideoName = "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix;
+	            if (realYear == 2015) {
+	    			cnnVideoName = "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2015;				
+	    			videoAddressString = videoAddressStringPrefix2015 + archiveYear + "/" + archiveMonthS + "/" + archiveDayS + "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2015; 
+	    			videoAddressString2 = videoAddressStringPrefix2015 + realYear + "/" + realMonthS + "/" + realDayS + "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2015; 
+	    			videoAddressString3 = videoAddressStringPrefix2015 + realYear + "/" + realMonthS + "/" + realDayS + "/orig-sn-" + realMonthS + "-" + realDayS + "-" + (realYear-2000) + videoAddressStringPostfix2015; 
+//	    			videoAddressString4 = videoAddressStringPrefix2015 + archiveYear + "/" + archiveMonthS + "/" + archiveDayS + "/orig-sn-" + realMonthS +  realDayS +  (realYear-2000) + videoAddressStringPostfix2015; 
+	    			videoAddressString4 = videoAddressStringPrefix2015 + archiveYear + "/" + archiveMonthS + "/" + archiveDayS + "/orig-sn-" + realMonthS +  realDayS + videoAddressStringPostfix2015; 
+	    			videoAddressString5 = videoAddressStringPrefix2015 + realYear + "/" + realMonthS + "/" + realDayS + "/orig-sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2015; 
+				} else {
+					cnnVideoName = "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2014;				
+					videoAddressString = videoAddressStringPrefix2014 + archiveYear + "/" + archiveMonthS + "/" + archiveDayS + "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2014; 
+					videoAddressString2 = videoAddressStringPrefix2014 + realYear + "/" + realMonthS + "/" + realDayS + "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2014; 
+					videoAddressString3 = videoAddressStringPrefix2014 + realYear + "/" + realMonthS + "/" + realDayS + "/orig-sn-" + realMonthS + "-" + realDayS + "-" + (realYear-2000) + videoAddressStringPostfix2014; 
+					videoAddressString4 = videoAddressStringPrefix2014 + archiveYear + "/" + archiveMonthS + "/" + archiveDayS + "/orig-sn-" + realMonthS +  realDayS +  (realYear-2000) + videoAddressStringPostfix2014; 
+					videoAddressString5 = videoAddressStringPrefix2014 + realYear + "/" + realMonthS + "/" + realDayS + "/orig-sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2014; 
+				}
 	            
 				scriptAddressString =  scriptAddressStringPrefix + (realYear-2000) + realMonthS + "/" + realDayS + scriptAddressStringPostfix;
-//				videoAddressString = videoAddressStringPrefix + archiveYear + "/" + archiveMonthS + "/" + archiveDayS + "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix; 
-//				videoAddressString2 = videoAddressStringPrefix + realYear + "/" + realMonthS + "/" + realDayS + "/sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix; 
-//				videoAddressString3 = videoAddressStringPrefix + realYear + "/" + realMonthS + "/" + realDayS + "/orig-sn-" + realMonthS + "-" + realDayS + "-" + (realYear-2000) + videoAddressStringPostfix; 
-//				videoAddressString4 = videoAddressStringPrefix + archiveYear + "/" + archiveMonthS + "/" + archiveDayS + "/orig-sn-" + realMonthS +  realDayS +  (realYear-2000) + videoAddressStringPostfix; 
-//				videoAddressString5 = videoAddressStringPrefix + realYear + "/" + realMonthS + "/" + realDayS + "/orig-sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix; 
 				videoDate = realMonthS + realDayS;
 				
 				webAddressString = webAddressPrefix + cnnScriptAddrStringArray[position];
 				
 				if (isDebug) {
 					Log.e("gray", "MainActivity.java:onItemClick, " + "scriptAddressString:" + scriptAddressString);
-//					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString:" + videoAddressString);
-//					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString2:" + videoAddressString2);
-//					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString3:" + videoAddressString3);
-//					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString4:" + videoAddressString4);
-//					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString5:" + videoAddressString5);
+					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString:" + videoAddressString);
+					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString2:" + videoAddressString2);
+					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString3:" + videoAddressString3);
+					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString4:" + videoAddressString4);
+					Log.e("gray", "MainActivity.java:onItemClick, " + "vodeoAddressString5:" + videoAddressString5);
 					Log.e("gray", "MainActivity.java:onItemClick, " + "webAddressString:" + webAddressString);
 				}
 			
@@ -677,7 +698,12 @@ public class MainActivity extends Activity {
 	                e.printStackTrace();
 	            }
 	    		
-	            final String vdeleteVideoName = "sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix;
+	            final String vdeleteVideoName;
+	            if (realYear == 2015) {
+	            	vdeleteVideoName = "sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2015;				
+				} else {
+					vdeleteVideoName = "sn-" + realMonthS + realDayS + (realYear-2000) + videoAddressStringPostfix2014;				
+				}
 	            if (isDebug) {
 	            	Log.e("gray", "MainActivity.java:onItemLongClick, cnnVideoName:" + vdeleteVideoName);
 				}
@@ -760,28 +786,10 @@ public class MainActivity extends Activity {
     				}
     				
     				if(isNotification){
-    					
     					showAlertDialog("Notification!", notificationContent);    					
-    					
     				}
     				
-    				if(newestAppVersion > currentAppVersion){
-    					
-    					TextView tv_update  = new TextView(MainActivity.this);
-    					tv_update.setMovementMethod(LinkMovementMethod.getInstance());
-    					tv_update.setText(Html.fromHtml(
-    		            		"New version available!<br> " +
-    	        				"Please find new one on <a href='https://play.google.com/store/apps/details?id=com.graylin.csnews'><b>Google Play</b></a> " +
-    							"or <a href='" + updateAppURL + "'><b>Here</b></a>. <br>"
-    		            		)); 
-    					tv_update.setTextSize(18);
-    					tv_update.setPadding(20, 20, 20, 20);
-    		            new AlertDialog.Builder(MainActivity.this)
-    		            .setTitle("New version notification!")
-    		            .setView(tv_update)
-    		            .show();
-    		            
-    				}
+    				checkNewerVersion();
     				
     				break;
            	}
@@ -859,6 +867,73 @@ public class MainActivity extends Activity {
 		}
 			
 		waitFlag = true;
+    }
+    
+    public void checkNewerVersion() {
+    	
+    	if(newestAppVersion > currentAppVersion){
+//    	if(true){
+			
+			TextView tv_update  = new TextView(MainActivity.this);
+			tv_update.setMovementMethod(LinkMovementMethod.getInstance());
+			tv_update.setText(Html.fromHtml(
+            		"New version available!<br> " +
+    				"Please find new one on <a href='https://play.google.com/store/apps/details?id=com.graylin.csnews'><b>Google Play</b></a> " +
+					"or <a href='" + updateAppURL + "'><b>Here</b></a>. <br>"
+            		)); 
+			tv_update.setTextSize(18);
+			tv_update.setPadding(20, 20, 20, 20);
+			
+//			AlertDialog.Builder alert = new AlertDialog.Builder(MainActivity.this);
+//			alert.setTitle("New version notification!");
+//			alert.setView(tv_update);
+//
+//			alert.setPositiveButton("Update", new DialogInterface.OnClickListener() {
+//			    public void onClick(DialogInterface dialog, int whichButton) {
+//			    	Log.e("gray", "MainActivity.java:onClick, Update" + "");
+//			    	// download video
+//					// if Enable Download && video file not exist, download it
+//						
+//					String url = "https://drive.google.com/file/d/0BykN7sCX7P4IYWh0WFpNdWhUOTQ/view?usp=sharing";
+//					DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+//					request.setDescription("to " + Environment.getExternalStorageDirectory().getPath()+"/"+Environment.DIRECTORY_DOWNLOADS);
+//					request.setTitle("10minNews.apk");
+//					// in order for this if to run, you must use the android 3.2 to compile your app
+//					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//						
+//						if (MainActivity.isDebug) {
+//							Log.e("gray", "PlayActivity.java: Build.VERSION.SDK_INT:" + Build.VERSION.SDK_INT);
+//							Log.e("gray", "PlayActivity.java: Build.VERSION_CODES.HONEYCOMB:" + Build.VERSION_CODES.HONEYCOMB);
+//						}
+//						request.allowScanningByMediaScanner();
+//						request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE);
+////							request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+//					} else {
+//						request.setShowRunningNotification(true);
+//					}
+//					
+//					request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "10minNews.apk");
+//					
+//					// get download service and enqueue file
+//					DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+//					manager.enqueue(request);
+//						
+//			    }
+//			});
+//			alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//			    public void onClick(DialogInterface dialog, int whichButton) {
+//			    	Log.e("gray", "MainActivity.java:onClick, Cancel" + "");
+//			    }
+//			});
+//			alert.show();
+			
+            new AlertDialog.Builder(MainActivity.this)
+            .setTitle("New version notification!")
+            .setView(tv_update)
+            
+            .show();
+            
+		}
     }
     
     public void getBlogVaraibles() throws Exception {
@@ -1352,23 +1427,7 @@ public void getCNNSList2015() throws Exception {
 				} 
 			}).start();
 	        
-	        if(newestAppVersion > currentAppVersion){
-				
-				TextView tv_update  = new TextView(MainActivity.this);
-				tv_update.setMovementMethod(LinkMovementMethod.getInstance());
-				tv_update.setText(Html.fromHtml(
-	            		"New version available!<br> " +
-        				"Please find new one on <a href='https://play.google.com/store/apps/details?id=com.graylin.csnews'><b>Google Play</b></a> " +
-						"or <a href='" + updateAppURL + "'><b>Here</b></a>. <br>"
-	            		)); 
-				tv_update.setTextSize(18);
-				tv_update.setPadding(20, 20, 20, 20);
-	            new AlertDialog.Builder(MainActivity.this)
-	            .setTitle("New version notification!")
-	            .setView(tv_update)
-	            .show();
-	            
-			}
+	        checkNewerVersion();
 	        
 	        break;
 	        
@@ -1387,10 +1446,8 @@ public void getCNNSList2015() throws Exception {
         	TextView tv  = new TextView(this);
             tv.setMovementMethod(LinkMovementMethod.getInstance());
             tv.setText(Html.fromHtml(
-            		"<b>What's new in this version (3.03)?</b><br><br>" +
-            		"<font color='red'>Because CNNS didn't provide podcast(video) this year, so some feature won't work; " +
-            		"App will update again when podcast available.<br>" +
-            		"Thanks for your understanding & support.</font><br>" +
+            		"<b>What's new in this version (3.05)?</b><br><br>" +
+            		"Update for 2015 podcast<br>" +
     				"<br>" +
     				"version (3.01) update:<br>" +
             		"1. Long press on list to delete.<br>" +
